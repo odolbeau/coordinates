@@ -1,39 +1,55 @@
-var poly;
-var map;
-
-function initialize() {
-    map = new google.maps.Map(document.getElementById('map-canvas'), {
+google.maps.event.addDomListener(window, 'load', function () {
+    var map = new google.maps.Map(document.getElementById('map-canvas'), {
         zoom: 6,
-        // Center the map on Chicago, USA.
-        //center: new google.maps.LatLng(41.879535, -87.624333)
         center: new google.maps.LatLng(48.8788866, 2.331609599999979),
     });
 
-    poly = new google.maps.Polygon({
+    polygon = new google.maps.Polygon({
         strokeColor: '#FF0000',
         strokeOpacity: 0.8,
         strokeWeight: 3,
         fillColor: '#FF0000',
         fillOpacity: 0.35
     });
-    poly.setMap(map);
+    polygon.setMap(map);
 
     // Add a listener for the click event
     google.maps.event.addListener(map, 'click', function(event) {
-        path = poly.getPath();
+        path = polygon.getPath();
         path.push(event.latLng);
     });
+
+    // Display coordinates when clicking on the polygon
+    google.maps.event.addListener(polygon, 'click', function(event) {
+        var content = '<h1>Coordinates of the area</h1><p>';
+        polygon.getPaths().forEach(function(arr) {
+            arr.forEach(function(latLng, index) {
+                content = content.concat(latLng.toString());
+                if (index != arr.length - 1) {
+                    content = content.concat(';');
+                }
+            })
+        });
+
+        content = content.concat('</p>');
+
+        new google.maps.InfoWindow({
+            content: content,
+            position: event.latLng
+        }).open(map);
+    });
+
 
     // Adds buttons
     undoButton = getButton('Undo');
     google.maps.event.addDomListener(undoButton, 'click', function() {
-        poly.getPath().pop();
+        polygon.getPath().pop();
     });
     map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(undoButton);
 
     clearButton = getButton('Clear all');
     google.maps.event.addDomListener(clearButton, 'click', function() {
-        poly.getPath().clear();
+        polygon.getPath().clear();
     });
     map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(clearButton);
 
@@ -70,13 +86,10 @@ function initialize() {
         map.fitBounds(bounds);
     });
 
-    // Bias the SearchBox results towards places that are within the bounds of the
-    // current map's viewport.
     google.maps.event.addListener(map, 'bounds_changed', function() {
-        var bounds = map.getBounds();
-        searchBox.setBounds(bounds);
+        searchBox.setBounds(map.getBounds());
     });
-}
+});
 
 function getButton(text)
 {
@@ -108,4 +121,3 @@ function getButton(text)
     return button;
 }
 
-google.maps.event.addDomListener(window, 'load', initialize);
