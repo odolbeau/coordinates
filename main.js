@@ -21,7 +21,7 @@ google.maps.event.addDomListener(window, 'load', function () {
 
     // Display coordinates when clicking on the polygon
     google.maps.event.addListener(polygon, 'click', function(event) {
-        var content = '<h1>Coordinates of the area</h1><p>';
+        var content = '<h1>Coordinates of the area</h1><p>[';
         polygon.getPaths().forEach(function(arr) {
             arr.forEach(function(latLng, index) {
                 content = content.concat(latLng.toString());
@@ -31,7 +31,7 @@ google.maps.event.addDomListener(window, 'load', function () {
             })
         });
 
-        content = content.concat('</p>');
+        content = content.concat(']</p>');
 
         new google.maps.InfoWindow({
             content: content,
