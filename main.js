@@ -39,7 +39,6 @@ google.maps.event.addDomListener(window, 'load', function () {
         }).open(map);
     });
 
-
     // Adds buttons
     undoButton = getButton('Undo');
     google.maps.event.addDomListener(undoButton, 'click', function() {
@@ -52,6 +51,20 @@ google.maps.event.addDomListener(window, 'load', function () {
         polygon.getPath().clear();
     });
     map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(clearButton);
+
+    // Coordinates box
+    coordinatesDiv = document.getElementById('coordinates-div');
+    map.controls[google.maps.ControlPosition.TOP_RIGHT].push(coordinatesDiv);
+
+    coordinatesButton = document.getElementById('coordinates-button');
+    google.maps.event.addDomListener(coordinatesButton, 'click', function() {
+        coordinates = document.getElementById('coordinates-input').value.split(';');
+        for (var i = 0, coordinate; coordinate = coordinates[i]; i++) {
+            latLng = coordinate.replace('(', '').replace(')', '').split(',');
+            path = polygon.getPath();
+            path.push(new google.maps.LatLng(parseInt(latLng[0]), parseInt(latLng[1])));
+        }
+    });
 
     // Search box
     input = document.getElementById('pac-input');
