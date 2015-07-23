@@ -62,8 +62,10 @@ google.maps.event.addDomListener(window, 'load', function () {
         for (var i = 0, coordinate; coordinate = coordinates[i]; i++) {
             latLng = coordinate.replace('(', '').replace(')', '').split(',');
             path = polygon.getPath();
-            path.push(new google.maps.LatLng(parseInt(latLng[0]), parseInt(latLng[1])));
+            coord = new google.maps.LatLng(parseFloat(latLng[0]), parseFloat(latLng[1]));
+            path.push(coord);
         }
+	map.setCenter(coord);
     });
 
     // Search box
